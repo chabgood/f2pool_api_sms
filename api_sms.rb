@@ -2,7 +2,7 @@ require 'bundler/inline'
 
 gemfile do
   source 'https://rubygems.org'
-  ruby '2.6.1'
+  ruby '2.6.5'
 
   gem 'httparty'
   gem 'twilio-ruby'
