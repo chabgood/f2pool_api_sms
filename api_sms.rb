@@ -19,12 +19,13 @@ require 'twilio-ruby'
 
 include ActionView::Helpers::NumberHelper
 
-response = HTTParty.get('https://api.f2pool.com/nervos/chabgood').parsed_response
+coin = ARGV[0] || 'nervos'
+response = HTTParty.get("https://api.f2pool.com/#{coin}/chabgood").parsed_response
 amount = response["value"]
 workers_online = response["worker_length_online"]
 
 if workers_online > 0
   amount = number_to_human(amount, precision: 4)
   client = Twilio::REST::Client.new(ENV["ACCT_SID"], ENV["AUTH_TOKEN"])
-  client.messages.create(from: ENV["FROM"], to: ENV["TO"], body: "Total CKB: #{amount} \n Workers Online: #{workers_online}")
+  client.messages.create(from: ENV["FROM"], to: ENV["TO"], body: "Total #{coin}: #{amount} \n Workers Online: #{workers_online}")
 end
