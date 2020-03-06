@@ -65,7 +65,7 @@ class F2Pool
   def send_sms
     if self.workers_online > 0
       client = Twilio::REST::Client.new(ENV["ACCT_SID"], ENV["AUTH_TOKEN"])
-      client.messages.create(from: ENV["FROM"], to: ENV["TO"], body: "Total #{self.coin}: #{self.coin_amount} \n Workers Online: #{workers_online} \n USD: #{self.usd_amount}")
+      client.messages.create(from: ENV["FROM"], to: ENV["TO"], body: "Total #{self.coin}: #{self.coin_amount} \n Workers Online: #{workers_online} \n USD: $#{self.usd_amount}")
     end
   end
 end
