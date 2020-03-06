@@ -21,8 +21,6 @@ require 'twilio-ruby'
 class F2Pool
   include HTTParty
   include ActionView::Helpers::NumberHelper
-
-  base_uri ENV["API"]
   
   attr_accessor :coin, :headers, :coin_amount, :workers_online, :client, :usd_amount
   def initialize()
