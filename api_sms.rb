@@ -21,14 +21,15 @@ require 'twilio-ruby'
 class F2Pool
   include HTTParty
   include ActionView::Helpers::NumberHelper
-  
-  attr_accessor :coin, :headers, :coin_amount, :workers_online, :client, :usd_amount
+
+  attr_accessor :coin, :headers, :coin_amount, :workers_online, :client, :usd_amount, :hashrate, :amount
   def initialize()
     @coin = ARGV[0] || 'nervos'
     @headers = { "X-CMC_PRO_API_KEY" => "#{ENV['API_KEY']}" }
     @coin_amount = 0
     @workers_online = 0
     @usd_amount=0
+    @hashrate = 0
     initialize_twilio_info
   end
 
@@ -49,17 +50,19 @@ class F2Pool
   private
 
   def get_f2poool_info
-    response = HTTParty.get("https://api.f2pool.com/#{self.coin}/chabgood").parsed_response
-    self.coin_amount = number_to_human(response["value"], precision: 4)
+    response = HTTParty.get("https://api.f2pool.com/#{self.coin}/chabgoodmoo").parsed_response
+    self.coin_amount = number_to_human(response["value"])
     self.workers_online = response["worker_length_online"]
+    self.hashrate = number_to_human(response["hashrate"] * 1000)
   end
 
   def get_coinmarket_cap_data
-    data = {'convert' => 'USD', 'amount' => "#{self.coin_amount}", 'symbol'=>"#{self.coin.upcase}"}
+    data = {'convert' => 'USD', 'amount' => "#{self.coin_amount}", 'symbol'=> (@coin == 'bitcoin' ? 'BTC' : @coin)}
     coin_data = HTTParty.get(ENV["API"], query: data, headers: self.headers).parsed_response
-    self.usd_amount = number_to_human(coin_data["data"]["quote"]["USD"]["price"],precision: 4)
+    binding.pry
+    self.coin_amount = number_to_human(coin_data["data"][0]["quote"]["USD"]["price"], precision: 3)
   end
-  
+
   def send_sms
     if self.workers_online > 0
       client = Twilio::REST::Client.new(ENV["ACCT_SID"], ENV["AUTH_TOKEN"])
